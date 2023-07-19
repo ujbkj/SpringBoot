@@ -1,0 +1,106 @@
+spring:
+  #mysql数据库连接配置文件
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cloudlibrary?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: '030103' #放入properties里面不需要加入单引号，yaml对于特殊字符无法进行解析
+    #    type: com.zaxxer.hikari.HikariDataSource
+
+    druid:
+    #开启spring监控(druid-1.2.15版本对spring监控无效)
+     aop-patterns: com.cjj.*
+
+    #开启sql监控和防火墙
+     filters: stat,wall,slf4j
+
+     filter:
+       stat:   # 对上面filters里面的stat的详细配置
+        enabled: true
+        log-slow-sql: true
+        slow-sql-millis: 1000 #开启SQL慢查询
+       wall: # 对上面filters里面的wall的详细配置
+         enabled: true
+         config:
+           drop-table-allow: false
+       #           update-allow: false
+    #配置监控页的功能
+     stat-view-servlet:
+       enabled: true
+#       login-username: admin
+#       login-password: 123456
+       resetEnable: false
+    #监控web应用
+     web-stat-filter:
+       enabled: true
+       url-pattern: /*
+       exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+#配置日志彩色打印
+  output:
+    ansi:
+      enabled: always
+  #JDBC配置文件
+  jdbc:
+    template:
+      query-timeout: 3 #查询超时时间（s）
+  #Redis配置规则(因为redis安装问题,没有redis的配置信息（账号，密码，端口号，路径等）需购买阿里云)只需开启redis服务就行
+  redis:
+    client-type: jedis
+    jedis:
+      pool:
+        max-active: 10
+        max-idle: 1
+
+  #配置可视化监控，本项目作为客户端，springboot3作为服务端
+  boot:
+    admin:
+      client:
+        url: http://localhost:8888
+        instance:
+          name: springboot_web2
+          prefer-ip: true
+
+
+#mybatis配置规则
+mybatis:
+  #config-location: classpath:mybatis/mybatis-config.xml #配置全局配置文件
+  #mapper-locations: classpath:mybatis/mapper/*.xml  #配置SQL映射文件
+  configuration: #指定mybatis全局配置文件中相关的配置项（不需要再去写mybatis-config.xml）
+    map-underscore-to-camel-case: true #开启驼峰命名法
+
+#mybatis-plus配置规则
+mybatis-plus:
+  mapper-locations: mybatis/mapper/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql日志打印
+
+#开启mybatis的日志
+logging:
+  level:
+    com.cjj.Mapper: debug
+
+#开启springboot的指标监控
+#management都是在actuator下面
+#management.endpoint.端点名.xxxx 具体配置某一个端点
+management:
+  endpoints:
+    enabled-by-default: true
+    web: #以web方式暴露所有端点
+      exposure:
+        include: '*'
+
+
+  endpoint:
+    health:
+      show-details: always
+
+  info:
+    env:
+      enabled: true
+info:
+  webName: spring-boot
+  webversion: v1.0
+  mavenprojectName: @project.name@
+  mavenprojectversion: @project.version@
+
+

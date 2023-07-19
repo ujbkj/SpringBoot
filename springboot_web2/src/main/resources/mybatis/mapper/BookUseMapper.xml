@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cjj.Mapper.BookUseMapper">
+ <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
+  insert into user(`user_name`,`user_password`,`user_email`,`user_role`,`user_status`)
+  value (#{userName},#{userPassword},#{userEmail},#{userRole},#{userStatus})
+ </insert>
+
+
+</mapper>

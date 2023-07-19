@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catering.system.mapper.SysEateryCouponsMapper">
+
+    <resultMap type="SysEateryCoupons" id="SysEateryCouponsResult">
+        <result property="couponsId"    column="coupons_id"    />
+        <result property="couponsMoney"    column="coupons_money"    />
+        <result property="couponsDiscounts"    column="coupons_discounts"    />
+        <result property="couponsRebate"    column="coupons_rebate"    />
+        <result property="couponsType"    column="coupons_type"    />
+        <result property="couponsCount"    column="coupons_count"    />
+        <result property="couponsDuration"    column="coupons_duration"    />
+        <result property="eateryAddress"    column="eatery_address"    />
+        <result property="couponsImage"    column="coupons_image"    />
+        <result property="expireTime"    column="expire_time"    />
+        <result property="couponsUid"    column="coupons_uid"    />
+        <result property="eateryTitle"    column="eatery_title"    />
+        <result property="remarkAddress"  column="remark_address"    />
+        <result property="eateryUid"    column="eatery_uid"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <resultMap type="EateryCouponsModel" id="SysEateryCouponsVoResult">
+        <result property="couponsId"    column="coupons_id"    />
+        <result property="couponsMoney"    column="coupons_money"    />
+        <result property="couponsDiscounts"    column="coupons_discounts"    />
+        <result property="couponsRebate"    column="coupons_rebate"    />
+        <result property="couponsImage"    column="coupons_image"    />
+        <result property="remarkAddress"  column="remark_address"    />
+        <result property="couponsUid"    column="coupons_uid"    />
+        <result property="eateryTitle"    column="eatery_title"    />
+
+        <result property="eateryUid"    column="eatery_uid"    />
+    </resultMap>
+
+    <resultMap type="EateryImages" id="EateryImagesResult">
+        <result property="id"    column="id"    />
+        <result property="eateryImage"    column="eatery_image"    />
+        <result property="eateryImageName"    column="eatery_image_name"    />
+        <result property="eateryImageType"    column="eatery_image_type"    />
+        <result property="eateryUid"    column="eatery_uid"    />
+    </resultMap>
+
+
+
+
+    <sql id="selectSysEateryCouponsVo">
+        select coupons_id, coupons_money, coupons_discounts, coupons_rebate, coupons_type, coupons_count, coupons_duration, eatery_address, coupons_image, expire_time, coupons_uid, eatery_title, eatery_uid, create_time from sys_eatery_coupons
+    </sql>
+
+    <sql id="selectCouponsVo">
+        select coupons_id, coupons_money, coupons_discounts, coupons_rebate, coupons_image, coupons_uid, eatery_title, remark_address, eatery_uid from sys_eatery_coupons
+    </sql>
+
+    <select id="selectSysEateryCouponsList" parameterType="SysEateryCoupons" resultMap="SysEateryCouponsVoResult">
+        <include refid="selectCouponsVo"/>
+        <where>
+
+            <if test="eateryAddress != null  and eateryAddress != ''"> eatery_address like concat('%', #{eateryAddress}, '%')</if>
+            <if test="eateryType != null  and eateryType != ''"> and eatery_type = #{eateryType}</if>
+            <if test="currentTime != null"> and expire_time &gt; #{currentTime}</if>
+
+        </where>
+    </select>
+
+    <select id="selectSysEateryCouponsById" parameterType="Long" resultMap="SysEateryCouponsResult">
+        <include refid="selectSysEateryCouponsVo"/>
+        where coupons_id = #{couponsId}
+    </select>
+
+    <select id="queryCouponsCount" resultType="int" parameterType="String">
+        select count(1) from sys_eatery_coupons where eatery_uid = #{eateryUid}
+    </select>
+
+    <select id="queryEateryImages"  resultMap="EateryImagesResult" parameterType="string" >
+        select id,eatery_image,eatery_image_name,eatery_image_type,eatery_uid from sys_eatery_image WHERE eatery_uid = #{eateryUid}
+    </select>
+
+    <select id="queryCoupons" resultMap="SysEateryCouponsResult" parameterType="String">
+        <include refid="selectSysEateryCouponsVo"/>
+        where eatery_uid = #{eateryUid} and coupons_uid = #{couponsUid}
+    </select>
+
+    <select id="selectUserCoupons" resultMap="SysEateryCouponsResult" parameterType="String">
+        <include refid="selectSysEateryCouponsVo"/>
+         where eatery_uid = #{eateryUid}
+    </select>
+
+    <insert id="insertSysEateryCoupons" parameterType="SysEateryCoupons" useGeneratedKeys="true" keyProperty="couponsId">
+        insert into sys_eatery_coupons
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="couponsMoney != null">coupons_money,</if>
+            <if test="couponsDiscounts != null and couponsDiscounts != ''">coupons_discounts,</if>
+            <if test="couponsRebate != null and couponsRebate != ''">coupons_rebate,</if>
+            <if test="couponsType != null">coupons_type,</if>
+            <if test="couponsCount != null">coupons_count,</if>
+            <if test="couponsDuration != null">coupons_duration,</if>
+            <if test="eateryAddress != null">eatery_address,</if>
+            <if test="couponsImage != null">coupons_image,</if>
+            <if test="couponsUid != null">coupons_uid,</if>
+            <if test="expireTime != null">expire_time,</if>
+            <if test="eateryTitle != null">eatery_title,</if>
+            <if test="remarkAddress != null and remarkAddress != ''">remark_address,</if>
+            <if test="eateryUid != null">eatery_uid,</if>
+            <if test="eateryType != null">eatery_type,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="couponsMoney != null">#{couponsMoney},</if>
+            <if test="couponsDiscounts != null and couponsDiscounts != ''">#{couponsDiscounts},</if>
+            <if test="couponsRebate != null and couponsRebate != ''">#{couponsRebate},</if>
+            <if test="couponsType != null">#{couponsType},</if>
+            <if test="couponsCount != null">#{couponsCount},</if>
+            <if test="couponsDuration != null">#{couponsDuration},</if>
+            <if test="eateryAddress != null">#{eateryAddress},</if>
+            <if test="couponsImage != null">#{couponsImage},</if>
+            <if test="couponsUid != null">#{couponsUid},</if>
+            <if test="expireTime != null">#{expireTime},</if>
+            <if test="eateryTitle != null">#{eateryTitle},</if>
+            <if test="remarkAddress != null and remarkAddress != ''">#{remarkAddress},</if>
+            <if test="eateryUid != null">#{eateryUid},</if>
+            <if test="eateryType != null">#{eateryType},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysEateryCoupons" parameterType="SysEateryCoupons">
+        update sys_eatery_coupons
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="couponsMoney != null">coupons_money = #{couponsMoney},</if>
+            <if test="couponsDiscounts != null and couponsDiscounts != ''">coupons_discounts = #{couponsDiscounts},</if>
+            <if test="couponsRebate != null and couponsRebate != ''">coupons_rebate = #{couponsRebate},</if>
+            <if test="couponsType != null">coupons_type = #{couponsType},</if>
+            <if test="couponsCount != null">coupons_count = #{couponsCount},</if>
+            <if test="couponsDuration != null">coupons_duration = #{couponsDuration},</if>
+            <if test="eateryAddress != null">eatery_address = #{eateryAddress},</if>
+            <if test="couponsImage != null">coupons_image = #{couponsImage},</if>
+            <if test="couponsUid != null">coupons_uid = #{couponsUid},</if>
+            <if test="expireTime != null">expire_time = #{expireTime},</if>
+            <if test="eateryTitle != null">eatery_title = #{eateryTitle},</if>
+            <if test="eateryUid != null">eatery_uid = #{eateryUid},</if>
+            <if test="eateryType != null">eatery_type = #{eateryType},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where coupons_id = #{couponsId}
+    </update>
+
+    <delete id="deleteSysEateryCouponsById" parameterType="Long">
+        delete from sys_eatery_coupons where coupons_id = #{couponsId}
+    </delete>
+
+    <delete id="deleteSysEateryCouponsByIds" parameterType="String">
+        delete from sys_eatery_coupons where coupons_id in
+        <foreach item="couponsId" collection="array" open="(" separator="," close=")">
+            #{couponsId}
+        </foreach>
+    </delete>
+</mapper>

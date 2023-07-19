@@ -1,0 +1,287 @@
+pipeline {
+  agent {
+    node {
+      label 'maven'
+    }
+
+  }
+  stages {
+    stage('拉取代码') {
+      agent none
+      steps {
+        container('maven') {
+          git(credentialsId: 'gitee-id', url: 'https://gitee.com/fruidog/sy-catering.git', branch: 'master', changelog: true, poll: false)
+          sh 'ls -al'
+        }
+
+      }
+    }
+
+    stage('项目编译') {
+      agent none
+      steps {
+        container('maven') {
+          sh 'ls'
+          sh 'mvn package -Dmave.test.skip=true'
+        }
+
+      }
+    }
+
+    stage('default-2') {
+      parallel {
+        stage('构建镜像catering-gateway') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-gateway:latest -f catering-gateway/Dockerfile ./catering-gateway/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-auth') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-auth:latest -f catering-auth/Dockerfile ./catering-auth/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-system') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-system:latest -f catering-service/catering-system/Dockerfile ./catering-service/catering-system/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-food') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-food:latest -f catering-service/catering-food/Dockerfile ./catering-service/catering-food/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-cart') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-cart:latest -f catering-service/catering-cart/Dockerfile ./catering-service/catering-cart/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-order') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-order:latest -f catering-service/catering-order/Dockerfile ./catering-service/catering-order/'
+            }
+
+          }
+        }
+
+        stage('构建镜像catering-member-pay') {
+          agent none
+          steps {
+            container('maven') {
+              sh 'docker build -t catering-member-pay:latest -f catering-service/catering-member-pay/Dockerfile ./catering-service/catering-member-pay/'
+            }
+
+          }
+        }
+
+      }
+    }
+
+    stage('default-3') {
+      parallel {
+        stage('推送catering-gateway镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-gateway:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-gateway:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-gateway:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+        stage('推送catering-auth镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-auth:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-auth:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-auth:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+        stage('推送catering-system镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-system:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-system:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-system:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+        stage('推送catering-food镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-food:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-food:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-food:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+        stage('推送catering-cart镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-cart:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-cart:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-cart:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+
+        stage('推送catering-order镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-order:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-order:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-order:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+        stage('推送catering-member-pay镜像') {
+          agent none
+          steps {
+            container('maven') {
+              withCredentials([usernamePassword(credentialsId : 'aliyun-docker-registry' ,passwordVariable : 'DOCKER_PWD_VAR' ,usernameVariable : 'DOCKER_USER_VAR')]) {
+                sh 'echo "$DOCKER_PWD_VAR" | docker login $REGISTRY -u "$DOCKER_USER_VAR" --password-stdin'
+                sh 'docker tag catering-member-pay:latest $REGISTRY/$DOCKERHUB_NAMESPACE/catering-member-pay:SNAPSHOT-1'
+                sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/catering-member-pay:SNAPSHOT-1'
+              }
+
+            }
+
+          }
+        }
+
+      }
+    }
+
+    stage('default-4') {
+      parallel {
+
+        stage('部署catering-gateway环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-gateway/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-auth环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-auth/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-system环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-service/catering-system/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-cart环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-service/catering-cart/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-food环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-service/catering-food/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-order环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-service/catering-order/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+		stage('部署catering-member-pay环境') {
+          agent none
+          steps {
+            kubernetesDeploy(configs: 'catering-service/catering-member-pay/deploy/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+        }
+
+
+
+      }
+    }
+
+  }
+  environment {
+    DOCKER_CREDENTIAL_ID = 'dockerhub-id'
+    GITHUB_CREDENTIAL_ID = 'github-id'
+    KUBECONFIG_CREDENTIAL_ID = 'demo-kubeconfig'
+    REGISTRY = 'registry.cn-hangzhou.aliyuncs.com'
+    DOCKERHUB_NAMESPACE = 'sy-catering'
+    GITHUB_ACCOUNT = 'kubesphere'
+    APP_NAME = 'devops-java-sample'
+  }
+  parameters {
+    string(name: 'TAG_NAME', defaultValue: '', description: '')
+  }
+}

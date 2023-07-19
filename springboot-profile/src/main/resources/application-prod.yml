@@ -1,0 +1,5 @@
+person:
+  name: "prod-老板"
+  age: "50"
+server:
+  port: 8000

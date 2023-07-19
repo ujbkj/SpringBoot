@@ -1,0 +1,4 @@
+person:
+  name: "test-打工者"
+server:
+  port: 8001

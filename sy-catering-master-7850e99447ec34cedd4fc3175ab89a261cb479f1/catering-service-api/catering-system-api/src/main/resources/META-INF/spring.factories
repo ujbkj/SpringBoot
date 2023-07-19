@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.catering.system.api.feign.factory.RemoteUserFallbackFactory,\
+  com.catering.system.api.feign.factory.RemoteLogFallbackFactory, \
+  com.catering.system.api.feign.factory.RemoteFileFallbackFactory

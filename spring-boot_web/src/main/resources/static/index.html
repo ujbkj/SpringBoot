@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+<h1>欢迎你！</h1>
+测试REST风格
+<form action="/loginUser" method="get">
+    <input value="REST-GET submit" type="submit">
+</form>
+
+<form action="/loginUser" method="post">
+    <input value="REST-post submit" type="submit">
+</form>
+
+<form action="/loginUser" method="post">
+    <input name="_method" type="hidden" value="delete"/>
+    <input value="REST-DELETE submit" type="submit">
+</form>
+
+<form action="/loginUser" method="post">
+    <input name="_method" type="hidden" value="put"/>
+    <input value="REST-put submit" type="submit">
+</form>
+<hr>
+测试基本注解
+    <ul>
+        <a href="car/3/owner/lisi?age=18&inters=baskerball&inters=game">/car/{id}/owner/{username}</a>
+        <li>@PathVarable(路径变量)</li>
+
+        <li>@RequestHeader(获取表头)</li>
+
+        <li>@RequestParma（获取请求参数）</li>
+
+        <li>@CookieValue(获取Cookie值)</li>
+
+        <li>@RequestAttribute(获取request域属性)</li>
+
+        <li>@RequestBody(获取请求体)[POST]</li>
+
+        <li>@MatrixVariable(矩阵变量)</li>
+    </ul>
+<a href="/cars/sell;low=34;brand=byd,audi,yd">@MatrixVariable(矩阵变量)</a>
+<a href="/cars/sell;low=34;brand=byd;brand=audi;brand=yd">@MatrixVariable(矩阵变量)</a>
+<a href="/boss/1;age=20/2;age=10">@MatrixVariable(矩阵变量)/boss/{bossId}/{empId}</a>
+<br>
+<form action="/save"method="post">
+    测试@RequestBody获取数据<br>
+    用户名:<input name="usename"><br>
+    邮箱:<input name="email"/>
+    <input type="submit" value="提交">
+</form>
+<ol>
+    <li>1.矩阵变量需要在springboot中手动启动</li>
+    <li>2.根据RFC3986的规范，矩阵变量应当绑定在路径变量中</li>
+    <li>3.若是有多个矩阵变量，应当使用英文符号；进行分隔</li>
+    <li>4.若是一个矩阵变量有多个值，应当使用英文符号，进行分隔，或之多个重复的key即可</li>
+    <li>如:/cars/sell;low=34;brand=byd;audi,yd</li>
+</ol>
+
+<hr>
+测试原生API：
+<a href="/testapi">测试原生</a>
+<hr>
+测试复杂类型：<br>
+测试封装POJO：
+<form action="/saveuser" method="post">
+    姓名：<input name="username" value="lisi"><br>
+    年龄：<input name="age" value="19"/><br>
+    生日：<input name="brith" value="2022-10-27"><br>
+<!--    宠物姓名<input name="pet.name" value="宠物">-->
+<!--    宠物年龄:<input name="pet.age" value="5">-->
+    宠物信息<input name="pet" value="小黑,5"><br>
+    <input type="submit" value="保存">
+</form>
+</body>
+</html>

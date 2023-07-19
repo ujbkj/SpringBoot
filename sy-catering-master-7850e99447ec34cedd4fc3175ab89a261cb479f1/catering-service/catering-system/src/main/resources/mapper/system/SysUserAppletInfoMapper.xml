@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catering.system.mapper.SysUserAppletInfoMapper">
+
+    <resultMap type="com.catering.system.api.domain.SysUserAppletInfo" id="SysUserAppletInfoResult">
+        <result property="id"    column="id"    />
+        <result property="eateryTitle"    column="eatery_title"    />
+        <result property="wxSubMchId"    column="wx_sub_mch_id"    />
+        <result property="aliToken"    column="ali_token"    />
+        <result property="aliUserId"    column="ali_user_id"    />
+        <result property="aliAesKey"    column="ali_aes_key"    />
+        <result property="aliTemplateId"    column="ali_template_id"    />
+        <result property="eateryUid"    column="eatery_uid"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSysUserAppletInfoVo">
+        select id, eatery_title, wx_sub_mch_id, ali_token, ali_user_id, ali_aes_key, ali_template_id, eatery_uid, create_by, create_time, update_by, update_time from sys_user_applet_info
+    </sql>
+
+    <select id="selectSysUserAppletInfoList" parameterType="com.catering.system.api.domain.SysUserAppletInfo" resultMap="SysUserAppletInfoResult">
+        <include refid="selectSysUserAppletInfoVo"/>
+        <where>
+            <if test="eateryTitle != null  and eateryTitle != ''"> and eatery_title = #{eateryTitle}</if>
+            <if test="wxSubMchId != null  and wxSubMchId != ''"> and wx_sub_mch_id = #{wxSubMchId}</if>
+            <if test="aliToken != null  and aliToken != ''"> and ali_token = #{aliToken}</if>
+            <if test="aliUserId != null  and aliUserId != ''"> and ali_user_id = #{aliUserId}</if>
+            <if test="eateryUid != null  and eateryUid != ''"> and eatery_uid = #{eateryUid}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND date_format(u.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND date_format(u.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSysUserAppletInfoById" parameterType="Long" resultMap="SysUserAppletInfoResult">
+        <include refid="selectSysUserAppletInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getAppLetIdInfo" parameterType="object" resultMap="SysUserAppletInfoResult">
+        <include refid="selectSysUserAppletInfoVo"/>
+        where `eatery_uid` = #{eateryUid}
+    </select>
+
+    <insert id="insertSysUserAppletInfo" parameterType="com.catering.system.api.domain.SysUserAppletInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_user_applet_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eateryTitle != null and eateryTitle != ''">eatery_title,</if>
+            <if test="wxSubMchId != null">wx_sub_mch_id,</if>
+            <if test="aliToken != null">ali_token,</if>
+            <if test="aliUserId != null">ali_user_id,</if>
+            <if test="aliAesKey != null">ali_aes_key,</if>
+            <if test="aliTemplateId != null">ali_template_id,</if>
+            <if test="eateryUid != null and eateryUid != ''">eatery_uid,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eateryTitle != null and eateryTitle != ''">#{eateryTitle},</if>
+            <if test="wxSubMchId != null">#{wxSubMchId},</if>
+            <if test="aliToken != null">#{aliToken},</if>
+            <if test="aliUserId != null">#{aliUserId},</if>
+            <if test="aliAesKey != null">#{aliAesKey},</if>
+            <if test="aliTemplateId != null">#{aliTemplateId},</if>
+            <if test="eateryUid != null and eateryUid != ''">#{eateryUid},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysUserAppletInfo" parameterType="com.catering.system.api.domain.SysUserAppletInfo">
+        update sys_user_applet_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eateryTitle != null and eateryTitle != ''">eatery_title = #{eateryTitle},</if>
+            <if test="wxSubMchId != null">wx_sub_mch_id = #{wxSubMchId},</if>
+            <if test="aliToken != null">ali_token = #{aliToken},</if>
+            <if test="aliUserId != null">ali_user_id = #{aliUserId},</if>
+            <if test="aliAesKey != null">ali_aes_key = #{aliAesKey},</if>
+            <if test="aliTemplateId != null">ali_template_id = #{aliTemplateId},</if>
+            <if test="eateryUid != null and eateryUid != ''">eatery_uid = #{eateryUid},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysUserAppletInfoById" parameterType="Long">
+        delete from sys_user_applet_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSysUserAppletInfoByIds" parameterType="String">
+        delete from sys_user_applet_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

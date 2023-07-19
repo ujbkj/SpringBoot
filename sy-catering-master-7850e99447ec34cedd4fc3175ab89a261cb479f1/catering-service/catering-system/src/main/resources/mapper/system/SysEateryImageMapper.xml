@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.catering.system.mapper.SysEateryImageMapper">
+
+    <resultMap type="com.catering.system.domain.SysEateryImage" id="SysEateryImageResult">
+        <result property="id"    column="id"    />
+        <result property="eateryImage"    column="eatery_image"    />
+        <result property="eateryImageName"    column="eatery_image_name"    />
+        <result property="eateryImageType"    column="eatery_image_type"    />
+        <result property="eateryUid"    column="eatery_uid"    />
+    </resultMap>
+
+    <sql id="selectSysEateryImageVo">
+        select id, eatery_image, eatery_image_name, eatery_image_type, eatery_uid from sys_eatery_image
+    </sql>
+
+    <select id="selectSysEateryImageList" parameterType="String" resultMap="SysEateryImageResult">
+        <include refid="selectSysEateryImageVo"/>
+        <where>
+            <if test="eateryUid != null  and eateryUid != ''"> and eatery_uid = #{eateryUid}</if>
+        </where>
+    </select>
+
+    <select id="selectSysEateryImageById" parameterType="Long" resultMap="SysEateryImageResult">
+        <include refid="selectSysEateryImageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="batchUserRole">
+        insert into sys_user_role(user_id, role_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <insert id="insertSysEateryImage">
+        insert into sys_eatery_image(eatery_image, eatery_image_name, eatery_image_type, eatery_uid) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.eateryImage},#{item.eateryImageName}, #{item.eateryImageType}, #{item.eateryUid})
+        </foreach>
+    </insert>
+
+    <update id="updateSysEateryImage" parameterType="com.catering.system.domain.SysEateryImage">
+        update sys_eatery_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eateryImage != null">eatery_image = #{eateryImage},</if>
+            <if test="eateryImageName != null">eatery_image_name = #{eateryImageName},</if>
+            <if test="eateryImageType != null">eatery_image_type = #{eateryImageType},</if>
+            <if test="eateryUid != null">eatery_uid = #{eateryUid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysEateryImageById" parameterType="Long">
+        delete from sys_eatery_image where id = #{id}
+    </delete>
+
+    <delete id="deleteSysEateryImageByIds" parameterType="String">
+        delete from sys_eatery_image where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSysEateryImages" parameterType="String">
+        delete from sys_eatery_image where eatery_uid = #{eateryUid}
+    </delete>
+</mapper>

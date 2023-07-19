@@ -1,0 +1,18 @@
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true #开启REST风格 （页面表单Rest）
+    contentnegotiation:
+      favor-parameter: true  #开启请求参数浏览器自定义内容协商
+#  mvc:
+#      static-path-pattern: /res/**
+#  web:
+#    resources:
+#      static-locations: classpath:/img/
+
+#       add-mappings: false #禁用所有静态资源
+#        cache:
+#          period: 111000 #设置缓存多少秒 不会再发生请求 存储在浏览器中
+
+
